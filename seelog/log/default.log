@@ -1,0 +1,9 @@
+[2021-04-10 23:40:33] [ERR] [TestSeelog.go:18] seelog error
+[2021-04-10 23:40:33] [INF] [TestSeelog.go:19] seelog info
+[2021-04-10 23:40:33] [DBG] [TestSeelog.go:20] seelog debug
+[2021-04-10 23:52:55] [Error] [TestSeelog.go:18] seelog error
+[2021-04-10 23:52:55] [Info] [TestSeelog.go:19] seelog info
+[2021-04-10 23:52:55] [Debug] [TestSeelog.go:20] seelog debug
+[2021-04-10 23:53:53] [ERROR] [TestSeelog.go:18] seelog error
+[2021-04-10 23:53:53] [INFO] [TestSeelog.go:19] seelog info
+[2021-04-10 23:53:53] [DEBUG] [TestSeelog.go:20] seelog debug

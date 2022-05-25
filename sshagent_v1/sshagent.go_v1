@@ -1,0 +1,127 @@
+/*
+	go env | grep GOROOT
+	cd $GOROOT
+	mkdir -p src/golang.org/x/
+	cd src/golang.org/x/
+	git clone https://github.com/golang/crypto.git
+
+*/
+package main
+
+import (
+    "flag"
+    "net"
+    "log"
+    "fmt"
+    "bytes"
+    "golang.org/x/crypto/ssh"
+    "../Utils"  //通用类
+)
+
+func SSHConnect( user, password, host string, port int ) ( *ssh.Session, error ) {
+    var (
+        auth         []ssh.AuthMethod
+        addr         string
+        clientConfig *ssh.ClientConfig
+        client       *ssh.Client
+        session      *ssh.Session
+        err          error
+    )
+    // get auth method
+    auth = make([]ssh.AuthMethod, 0)
+    auth = append(auth, ssh.Password(password))
+
+    hostKeyCallbk := func(hostname string, remote net.Addr, key ssh.PublicKey) error {
+            return nil
+    }
+
+    clientConfig = &ssh.ClientConfig{
+        User:               user,
+        Auth:               auth,
+        // Timeout:             30 * time.Second,
+        HostKeyCallback:    hostKeyCallbk,
+    }
+
+    // connet to ssh
+    addr = fmt.Sprintf( "%s:%d", host, port )
+
+    if client, err = ssh.Dial( "tcp", addr, clientConfig ); err != nil {
+        return nil, err
+    }
+
+    // create session
+    if session, err = client.NewSession(); err != nil {
+        return nil, err
+    }
+
+    return session, nil
+}
+
+func runSsh(user, password, host string, port int, cmd string) string {
+
+    var stdOut, stdErr bytes.Buffer
+
+    session, err := SSHConnect( user, password, host, port )
+    if err != nil {
+        log.Fatal(err)
+    }
+    defer session.Close()
+
+    session.Stdout = &stdOut
+    session.Stderr = &stdErr
+
+    //session.Run("if [ -d liujx/project ]; then echo 0; else echo 1; fi")
+    session.Run(cmd)
+    return stdOut.String() 
+
+}
+
+func printUsage() {
+	fmt.Println("  Usage: sshagent -f hostlist -c CmdStr")
+}
+
+func main() {
+	//rst := runSsh("root", "66777118", "10.1.126.14", 22, "uptime")
+	//fmt.Print(rst)
+	var hostlistfile string
+	var cmdstr string
+	flag.StringVar(&hostlistfile, "f" , "./hostlist", "Host List File Path ." )
+	flag.StringVar(&cmdstr, "c" , "", "Remote Command .")
+	h := flag.Bool("h", false, "show help info")
+	flag.Parse()
+
+	if *h || cmdstr == "" {
+		printUsage()
+		return  
+	}
+	
+	hostlist := Utils.Str2List( Utils.GetFileContent( hostlistfile ), "\n" , " ")
+	for ind := 0 ; ind<len(hostlist) ;ind++   {
+		host1 := hostlist[ind]
+		var host,password,user string
+		var port int
+		user = "root"
+		port = 22
+		password = "123456"
+		if len(host1) > 0 {
+			host = host1[0]
+		}
+		if len(host1) > 1 {
+			port = Utils.Atoi(host1[1])
+		}
+                if len(host1) > 2 {
+                        password = host1[2]
+                }
+		if len(host1) > 3 {
+			user = host1[3]
+		}
+		if host != "" {
+			fmt.Println("==> Login "+host+" run "+cmdstr+" ...")
+			rst := runSsh(user, password, host, port, cmdstr)
+			fmt.Println(rst)
+		}
+	}
+	fmt.Println()
+	fmt.Println("Run Over!!!")
+}
+

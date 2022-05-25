@@ -1,0 +1,5 @@
+2021/04/17 00:57:11 CGI error: fork/exec /var/www/cgi-bin///test.sh1: no such file or directory
+2021/04/17 02:48:50 CGI error: fork/exec /var/www/cgi-bin///test.sh1: no such file or directory
+2021/04/17 02:48:50 CGI error: fork/exec /var/www/cgi-bin///test.sh1: no such file or directory
+2021/04/17 02:48:54 CGI error: fork/exec /var/www/cgi-bin///test.sh1: no such file or directory
+2021/04/17 02:48:56 CGI error: fork/exec /var/www/cgi-bin///test.sh1: no such file or directory

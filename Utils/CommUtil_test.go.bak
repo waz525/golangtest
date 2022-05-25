@@ -1,0 +1,23 @@
+package Utils
+
+import (
+		"fmt"
+		)
+
+func TestInArray(test *testing.T) {
+	var tests = []struct {
+        input string
+		list []string
+        want  bool
+    }{
+		{"123",[]string{ "123", "456", "789"} , true},
+		{"123",[]string{ "12", "45", "78"} , true},
+	}
+
+	for _, test := range tests {
+		if got:=InArray(test.input,test.list) ; got != test.want {
+			t.Errorf("InArray(%s) = %v", test.input , got )
+		}
+	}
+}
+
